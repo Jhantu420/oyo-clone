@@ -2,6 +2,8 @@
 import Head from "next/head";
 import { useState } from "react";
 import axios from 'axios';
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 function Login() {
   const [name, setName] = useState("");
@@ -12,6 +14,7 @@ function Login() {
   const [password_error, setPassword_Error] = useState("");
   const [login, setLogin] = useState(false); 
   const [formMessage, setFormMessage] = useState(""); // To store success or error message
+  const router = useRouter()
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -49,8 +52,10 @@ function Login() {
             email,
             password
           });
+          Cookies.set('token', response.data.token, { expires: 7, path: '/' });
           setFormMessage("Login successful!");
           console.log(response.data);
+          router.push('/')
         } else {
           // Handle signup request
           const response = await axios.post('http://localhost:3000/api/user/register', {

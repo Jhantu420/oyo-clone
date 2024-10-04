@@ -1,11 +1,30 @@
 "use client";
+import { useRouter } from "next/navigation"; // For redirecting after logout
 import Image from "next/image";
 import Block from "./Block";
 import Link from "next/link";
-
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 const Header1 = () => {
- 
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in by checking for token in cookies
+    const token = Cookies.get('token');
+    setIsLoggedIn(!!token); // Set to true if token exists
+  }, []);
+
+  const handleLogout = () => {
+    // Clear user token from Cookies
+    Cookies.remove('token');
+
+    // Optionally redirect the user to login page
+    setIsLoggedIn(false);
+    router.push("/login"); // Redirect user to login page
+  };
+
   return (
     <div className=" flex justify-between border-b-2 border-gray-300 items-center h-24 px-10">
       <Image
@@ -31,7 +50,15 @@ const Header1 = () => {
             height={200}
             className=" w-10 h-10 rounded-full mr-5"
           />
-          <Link href={'/login'}><h3>Login/Signup</h3></Link>
+          {isLoggedIn ? (
+            <button onClick={handleLogout} className="font-bold text-red-500">
+              Logout
+            </button>
+          ) : (
+            <Link href={"/login"}>
+              <h3>Login/Signup</h3>
+            </Link>
+          )}
         </div>
       </div>
     </div>
