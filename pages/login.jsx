@@ -1,23 +1,26 @@
+'use client';
 import Head from "next/head";
 import { useState } from "react";
+import axios from 'axios';
 
 function Login() {
-  // State to handle name, email, and password input and errors
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name_error, setName_Error] = useState("");
   const [email_error, setEmail_Error] = useState("");
   const [password_error, setPassword_Error] = useState("");
+  const [login, setLogin] = useState(false); 
+  const [formMessage, setFormMessage] = useState(""); // To store success or error message
 
   // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let isValid = true;
 
     // Validation
-    if (name === "") {
+    if (!login && name === "") {
       setName_Error("Name is required");
       isValid = false;
     } else {
@@ -39,9 +42,37 @@ function Login() {
     }
 
     if (isValid) {
-      console.log("Form submitted:", { name, email, password });
-      // Proceed with form submission logic
+      try {
+        if (login) {
+          // Handle login request
+          const response = await axios.post('http://localhost:3000/api/user/login', {
+            email,
+            password
+          });
+          setFormMessage("Login successful!");
+          console.log(response.data);
+        } else {
+          // Handle signup request
+          const response = await axios.post('http://localhost:3000/api/user/register', {
+            name,
+            email,
+            password
+          });
+          setFormMessage("Signup successful!");
+          console.log(response.data);
+        }
+      } catch (error) {
+        // Handle API error
+        setFormMessage(error.response?.data?.message || "An error occurred");
+        console.error(error);
+      }
     }
+  };
+
+  // Function to toggle between login and signup modes
+  const toggleMode = () => {
+    setLogin(!login); // Toggle between login and signup
+    setFormMessage(""); // Clear any previous message when switching modes
   };
 
   // Basic email validation
@@ -64,10 +95,7 @@ function Login() {
             Hotels and homes across 800 cities, 24+ countries
           </p>
         </div>
-        <div
-          className="flex justify-center w-10/12 "
-          style={{ marginTop: "100px" }}
-        >
+        <div className="flex justify-center w-10/12" style={{ marginTop: "100px" }}>
           <div className="w-9/12 mt-11 text-white">
             <p className="font-bold text-5xl text-justify">There's a</p>
             <p className="font-bold text-5xl text-justify mt-2 mb-2">
@@ -83,24 +111,31 @@ function Login() {
 
           <div className="w-9/12 ml-10 border-2 h-auto bg-white shadow-2xl rounded-lg">
             <p className="h-10 flex items-center px-10 bg-gradient-to-r from-red-500 to bg-pink-600 font-bold text-white">
-              Sign up & Get ₹500 OYO Money
+              {login ? "Login to your account" : "Sign up & Get ₹500 OYO Money"}
             </p>
             <div className="px-10 py-8">
-              <h3 className="text-4xl font-bold mb-6">Login/Signup</h3>
+              <h3 className="text-4xl font-bold mb-6">{login ? 'Login' : 'Signup'}</h3>
               <p className="font-bold text-lg mb-4">
                 Please enter your details to continue
               </p>
 
               {/* Form Input */}
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Enter your name.."
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-                {name_error && <p className="text-red-500">{name_error}</p>}
+                
+                {
+                  !login && (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Enter your name.."
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      />
+                      {name_error && <p className="text-red-500">{name_error}</p>}
+                    </>
+                  )
+                }
 
                 <input
                   type="email"
@@ -127,15 +162,18 @@ function Login() {
                   type="submit"
                   className="w-full bg-red-500 text-white font-bold py-3 rounded-lg hover:bg-red-600 transition duration-300"
                 >
-                  Signup
+                  {login ? 'Login' : 'Signup'}
                 </button>
               </form>
 
-              {/* Login Link */}
+              {/* Display API response message */}
+              {formMessage && <p className="mt-4 text-center text-red-500">{formMessage}</p>}
+
+              {/* Toggle Mode Link */}
               <p className="mt-4">
-                <span>Already have an account?</span>
-                <span className="text-red-600 font-bold ml-2 cursor-pointer">
-                  Login
+                <span>{login ? "Don't have an account?" : "Already have an account?"}</span>
+                <span className="text-red-600 font-bold ml-2 cursor-pointer" onClick={toggleMode}>
+                  {login ? "Signup" : "Login"}
                 </span>
               </p>
             </div>
