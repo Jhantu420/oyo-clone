@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 function Header3() {
   return (
     <>
@@ -26,7 +28,7 @@ function Header3() {
               type="submit"
               className="h-16 px-3 py-2 col-span-1 bg-green-400 hover:cursor-pointer hover:bg-green-600 text-xl text-white"
             >
-              Search
+              <Link href={'/hotels'}>Search</Link>
             </button>
           </div>
           <div className="flex font-bold mx-20 my-5">
