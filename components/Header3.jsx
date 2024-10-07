@@ -1,6 +1,21 @@
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 function Header3() {
+  const [city, setCity] = useState('');
+  const router = useRouter();
+
+  const handleSearch = () => {
+    const trimmedCity = city.trim();
+    if (trimmedCity) {
+      // Navigate to the hotels page with the selected city
+      router.push(`/hotels?city=${trimmedCity}`);
+    } else {
+      // If no city is entered, navigate to hotels page without city parameter to show all hotels
+      router.push(`/hotels`);
+    }
+  };
+
   return (
     <>
       <div className="bg-gradient-to-r from-red-600 to-red-500 h-60">
@@ -13,6 +28,7 @@ function Header3() {
               type="text"
               placeholder="Search....."
               className="h-16 px-3 text-lg border-r-2 border-gray-400 col-span-2"
+              onChange={(e) => { setCity(e.target.value); }}
             />
             <input
               type="text"
@@ -25,29 +41,15 @@ function Header3() {
               className="h-16 px-3 text-lg border-r-2 border-gray-400 col-span-1"
             />
             <button
-              type="submit"
+              type="button"
+              onClick={handleSearch}
               className="h-16 px-3 py-2 col-span-1 bg-green-400 hover:cursor-pointer hover:bg-green-600 text-xl text-white"
             >
-              <Link href={'/hotels'}>Search</Link>
-            </button>
-          </div>
-          <div className="flex font-bold mx-20 my-5">
-            <button
-              type="submit"
-              className="h-16 px-3 py-2  hover:cursor-pointer text-white mr-5"
-            >
-              Continue your search
-            </button>
-            <button
-              type="submit"
-              className="h-16 px-3 py-2  hover:cursor-pointer text-white mr-5 border-2 border-white hover:bg-gray-500 rounded-xl"
-            >
-              Continue your search
+              Search
             </button>
           </div>
         </div>
       </div>
-      -
     </>
   );
 }
