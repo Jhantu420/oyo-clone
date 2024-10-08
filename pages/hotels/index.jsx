@@ -19,7 +19,7 @@ function Hotels({ hotels }) {
           setList(data.hotels);
         }
       } else {
-        // If no facilities are selected, we need to refetch hotels based on the price range
+        // If no facilities are selected, refetch hotels based on the price range
         handlePrice();
       }
     } catch (error) {
@@ -89,14 +89,16 @@ function Hotels({ hotels }) {
 export async function getServerSideProps(context) {
   const { city } = context.query; // Get the city from the query parameters
 
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000'; // Fallback to localhost if BASE_URL is not set
+
   let res;
 
   if (city) {
-    // If a city is provided, fetch hotels based on city
-    res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels?city=${city}`);
+    // If a city is provided, fetch hotels based on the city
+    res = await fetch(`${baseUrl}/api/hotels?city=${city}`);
   } else {
     // If no city is provided, fetch all hotels
-    res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels`);
+    res = await fetch(`${baseUrl}/api/hotels`);
   }
 
   const data = await res.json();

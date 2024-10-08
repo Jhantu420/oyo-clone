@@ -140,15 +140,12 @@ function SingleHotel({ hotel }) {
 export async function getServerSideProps(context) {
   const { id } = context.query;
 
-  // Fetch all hotels first
+  // Fetch the specific hotel by its id
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels?id=${id}`);
   const data = await res.json();
 
-  // Find the specific hotel by id from the list of hotels
-  const hotel = data.hotels.find((h) => h._id === id);
-
   // If the hotel is not found, return a 404 page
-  if (!hotel) {
+  if (!data.hotel) {
     return {
       notFound: true,
     };
@@ -157,7 +154,7 @@ export async function getServerSideProps(context) {
   // Pass the single hotel as a prop
   return {
     props: {
-      hotel,
+      hotel: data.hotel,
     },
   };
 }
