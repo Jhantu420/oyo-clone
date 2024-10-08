@@ -20,7 +20,7 @@ export default async function register(req, res) {
       password: hashedpassword,
     });
     const result = await newUser.save();
-    const token = jwt.sign({ token: result._id }, "weekend_trek", {
+    const token = jwt.sign({ token: result._id }, process.env.JWT_SECRET, {
       expiresIn: "15d",
     });
     return res

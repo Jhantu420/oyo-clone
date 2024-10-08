@@ -26,15 +26,18 @@ const Header1 = () => {
   };
 
   return (
-    <div className=" flex justify-between border-b-2 border-gray-300 items-center h-24 px-10">
+    <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-24 px-4 md:px-10 py-4 md:py-0 border-b-2 border-gray-300">
+      {/* Logo */}
       <Image
         src={"/logo.png"}
         alt="logo"
         width={200}
         height={200}
-        className=" w-28 h-28 "
+        className="w-20 h-20 md:w-28 md:h-28 mb-4 md:mb-0"
       />
-      <div className=" h-full flex">
+
+      {/* Blocks and User Section */}
+      <div className="flex flex-col md:flex-row items-center h-full">
         <Block title={"Become a member"} para={"Additional 0% off on stays."} />
         <Block
           title={"OYO for business"}
@@ -42,13 +45,15 @@ const Header1 = () => {
         />
         <Block title={"List your property"} para={"Start earning in 30 min."} />
         <Block title={"987654321"} para={"Call us to book now."} />
-        <div className="flex items-center px-3 ">
+
+        {/* User Section */}
+        <div className="flex items-center mt-4 md:mt-0 md:ml-5">
           <Image
             src={"/demo.svg"}
             alt="demo"
             width={200}
             height={200}
-            className=" w-10 h-10 rounded-full mr-5"
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full mr-3"
           />
           {isLoggedIn ? (
             <button onClick={handleLogout} className="font-bold text-red-500">
@@ -56,7 +61,7 @@ const Header1 = () => {
             </button>
           ) : (
             <Link href={"/login"}>
-              <h3>Login/Signup</h3>
+              <h3 className="font-bold text-blue-600">Login/Signup</h3>
             </Link>
           )}
         </div>

@@ -55,7 +55,7 @@ function Login() {
           Cookies.set('token', response.data.token, { expires: 7, path: '/' });
           setFormMessage("Login successful!");
           console.log(response.data);
-          router.push('/')
+          router.back()
         } else {
           // Handle signup request
           const response = await axios.post('http://localhost:3000/api/user/register', {

@@ -18,7 +18,7 @@ export default async function login(req,res){
         if(!passwordMatched){
             res.status(400).json({msg:"Invalid Credentitials"})
         }
-        const token = jwt.sign({ token: emailExists._id }, "weekend_trek", {
+        const token = jwt.sign({ token: emailExists._id }, process.env.JWT_SECRET, {
             expiresIn: "15d",
           });
         res.status(200).json({msg:"Login Successfully",token})

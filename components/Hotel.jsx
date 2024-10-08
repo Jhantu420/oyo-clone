@@ -60,10 +60,10 @@ function Hotel({ e }) {
 
           <div className="flex items-center">
             <button className="w-40 h-10 rounded-lg bg-blue-400 text-lg shadow-lg mr-6 hover:bg-blue-600 hover:text-white">
-              Price: {e?.price || 4500} {/* Default price if not available */}
+              Price: &#8377; {e?.price || 4500} {/* Default price if not available */}
             </button>
             <Link
-              href={`/hotels/${e?._id}`}
+              href={`http://localhost:3000/hotels/${e?._id}`}
               className="shadow-lg bg-gray-500 hover:bg-slate-600 p-2 rounded-xl text-white"
             >
               Show Details
