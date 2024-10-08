@@ -48,7 +48,7 @@ function Login() {
       try {
         if (login) {
           // Handle login request
-          const response = await axios.post('http://localhost:3000/api/user/login', {
+          const response = await axios.post(`${process.env.BASE_URL}/api/user/login`, {
             email,
             password
           });
@@ -58,7 +58,7 @@ function Login() {
           router.back()
         } else {
           // Handle signup request
-          const response = await axios.post('http://localhost:3000/api/user/register', {
+          const response = await axios.post(`${process.env.BASE_URL}/api/user/register`, {
             name,
             email,
             password

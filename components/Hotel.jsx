@@ -63,7 +63,7 @@ function Hotel({ e }) {
               Price: &#8377; {e?.price || 4500} {/* Default price if not available */}
             </button>
             <Link
-              href={`http://localhost:3000/hotels/${e?._id}`}
+              href={`${process.env.BASE_URL}/hotels/${e?._id}`}
               className="shadow-lg bg-gray-500 hover:bg-slate-600 p-2 rounded-xl text-white"
             >
               Show Details

@@ -13,7 +13,7 @@ function Hotels({ hotels }) {
     try {
       if (checkedList.length > 0) {
         const { data } = await axios.get(
-          `http://localhost:3000/api/facilities/search?val=${checkedList.join(',')}` // Pass checkedList values
+          `${process.env.BASE_URL}/api/facilities/search?val=${checkedList.join(',')}` // Pass checkedList values
         );
         if (data?.hotels) {
           setList(data.hotels);
@@ -30,7 +30,7 @@ function Hotels({ hotels }) {
   const handlePrice = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:3000/api/facilities/range?price=${price}`
+        `${process.env.BASE_URL}/api/facilities/range?price=${price}`
       );
       if (data?.hotels) {
         setList(data.hotels);
@@ -93,10 +93,10 @@ export async function getServerSideProps(context) {
 
   if (city) {
     // If a city is provided, fetch hotels based on city
-    res = await fetch(`http://localhost:3000/api/hotels?city=${city}`);
+    res = await fetch(`${process.env.BASE_URL}/api/hotels?city=${city}`);
   } else {
     // If no city is provided, fetch all hotels
-    res = await fetch(`http://localhost:3000/api/hotels`);
+    res = await fetch(`${process.env.BASE_URL}/api/hotels`);
   }
 
   const data = await res.json();
