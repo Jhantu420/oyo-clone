@@ -141,7 +141,7 @@ export async function getServerSideProps(context) {
   const { id } = context.query;
 
   // Fetch all hotels first
-  const res = await fetch(`${process.env.BASE_URL}/api/hotels?id=${id}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels?id=${id}`);
   const data = await res.json();
 
   // Find the specific hotel by id from the list of hotels

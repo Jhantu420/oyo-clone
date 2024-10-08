@@ -7,7 +7,7 @@ function Filters({ price, setPrice, handlePrice, checkedList, setCheckedList }) 
 
   const fetchFacilities = async () => {
     try {
-      const response = await axios.get(`${process.env.BASE_URL}/api/facilities`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/facilities`);
       const facilitiesData = response.data;
       if (facilitiesData?.facilities) {
         setList(facilitiesData.facilities);

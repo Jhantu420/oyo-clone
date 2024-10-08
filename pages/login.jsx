@@ -48,7 +48,7 @@ function Login() {
       try {
         if (login) {
           // Handle login request
-          const response = await axios.post(`${process.env.BASE_URL}/api/user/login`, {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/login`, {
             email,
             password
           });
