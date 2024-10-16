@@ -40,14 +40,11 @@ function Hotel({ e }) {
             <ul className="flex flex-wrap">
               {e?.facilities?.map((ele) => {
                 return (
-                  <li
-                    key={ele.name}
-                    className="flex items-center mr-10 mb-3"
-                  >
+                  <li key={ele.name} className="flex items-center mr-10 mb-3">
                     <Image
                       src={ele.img}
                       alt="logo"
-                      width={20}  // Adjusted size for the logo
+                      width={20} // Adjusted size for the logo
                       height={20}
                       className="rounded-full w-7 h-7"
                     />
@@ -60,10 +57,11 @@ function Hotel({ e }) {
 
           <div className="flex items-center">
             <button className="w-40 h-10 rounded-lg bg-blue-400 text-lg shadow-lg mr-6 hover:bg-blue-600 hover:text-white">
-              Price: &#8377; {e?.price || 4500} {/* Default price if not available */}
+              Price: &#8377; {e?.price || 4500}{" "}
+              {/* Default price if not available */}
             </button>
             <Link
-              href={`${process.env.NEXT_PUBLIC_BASE_URL}/hotels/${e?._id}`}
+              href={`/hotels/${e?._id}`}
               className="shadow-lg bg-gray-500 hover:bg-slate-600 p-2 rounded-xl text-white"
             >
               Show Details

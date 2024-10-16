@@ -19,25 +19,26 @@ function SingleHotel({ hotel }) {
 
   // Image slideshow logic
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % hotel.gallery.length
-      );
-    }, 3000); // Change image every 3 seconds
+    if (hotel && hotel.gallery && hotel.gallery.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % hotel.gallery.length);
+      }, 3000); // Change image every 3 seconds
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [hotel.gallery.length]);
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [hotel]);
 
   const prevImage = () => {
-    setCurrentImageIndex(
-      (prevIndex) =>
-        (prevIndex - 1 + hotel.gallery.length) % hotel.gallery.length
-    );
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + hotel.gallery.length) % hotel.gallery.length);
   };
 
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % hotel.gallery.length);
   };
+
+  if (!hotel) {
+    return <div>Loading...</div>; // Or a more user-friendly loading state
+  }
 
   return (
     <>
@@ -84,24 +85,16 @@ function SingleHotel({ hotel }) {
 
         <div>
           <h3 className="text-2xl sm:text-3xl font-bold">{hotel.name}</h3>
-          <p className="text-base sm:text-lg my-5 text-justify">
-            {hotel.description}
-          </p>
+          <p className="text-base sm:text-lg my-5 text-justify">{hotel.description}</p>
           <button className="w-32 sm:w-40 h-8 sm:h-10 rounded-lg bg-blue-400 text-base sm:text-lg shadow-lg mr-6 hover:bg-blue-600 hover:text-white">
             Price: &#8377; {hotel.price || "N/A"}
           </button>
 
           <p className="text-xl sm:text-2xl font-bold my-5">Facilities</p>
-          {/* Adjust facilities to a grid for responsive layout */}
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-base sm:text-lg">
             {hotel.facilities.map((facility) => (
               <li key={facility._id} className="flex flex-col items-center">
-                <Image
-                  src={facility.img}
-                  alt={facility.name}
-                  width={50}
-                  height={50}
-                />
+                <Image src={facility.img} alt={facility.name} width={50} height={50} />
                 {facility.name}
               </li>
             ))}
@@ -109,7 +102,7 @@ function SingleHotel({ hotel }) {
 
           {/* Conditional rendering for Book Now button or Login prompt */}
           {auth ? (
-            <Link href={`/payment/${hotel?._id}`}>
+            <Link href={`/payment/${hotel._id}`}>
               <button className="w-32 sm:w-40 h-8 sm:h-10 rounded-lg bg-red-400 text-base sm:text-lg shadow-lg mr-6 hover:bg-red-600 hover:text-white my-5">
                 Book Now
               </button>
@@ -118,10 +111,7 @@ function SingleHotel({ hotel }) {
             <div className="bg-yellow-100 p-3 sm:p-4 rounded-lg my-5 text-center">
               <p className="text-base sm:text-lg font-semibold text-red-600">
                 Please{" "}
-                <Link
-                  href="/login"
-                  className="text-blue-500 underline hover:text-blue-700"
-                >
+                <Link href="/login" className="text-blue-500 underline hover:text-blue-700">
                   login
                 </Link>{" "}
                 to get offers!
@@ -138,23 +128,23 @@ function SingleHotel({ hotel }) {
 }
 
 export async function getServerSideProps(context) {
-  const { id } = context.query;
+  const { id } = context.params; // Get the hotel ID from the URL
 
-  // Fetch the specific hotel by its id
+  // Fetch the specific hotel by its ID
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels?id=${id}`);
   const data = await res.json();
 
   // If the hotel is not found, return a 404 page
-  if (!data.hotel) {
+  if (!data.hotels || data.hotels.length === 0) {
     return {
       notFound: true,
     };
   }
 
-  // Pass the single hotel as a prop
+  // Return the hotel details as a prop
   return {
     props: {
-      hotel: data.hotel,
+      hotel: data.hotels.find((hotel) => hotel._id === id) || null,
     },
   };
 }

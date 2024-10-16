@@ -4,22 +4,26 @@ import Filters from "@/components/Filters";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-function Hotels({ hotels }) {
-  const [price, setPrice] = useState(3500);
-  const [list, setList] = useState([]);
+function Hotels({ initialHotels, initialCity }) {
+  const [price, setPrice] = useState(3500);  // Default price filter
+  const [list, setList] = useState(initialHotels || []); // Initialize with city-based hotels
   const [checkedList, setCheckedList] = useState([]);
+  const [city, setCity] = useState(initialCity || '');  // Store the selected city
 
+  // Fetch hotels based on facilities and apply price filter within that city
   const handleCheckList = async () => {
     try {
       if (checkedList.length > 0) {
         const { data } = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/facilities/search?val=${checkedList.join(',')}` // Pass checkedList values
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/facilities/search?city=${city}&val=${checkedList.join(',')}`
         );
         if (data?.hotels) {
-          setList(data.hotels);
+          // Filter the hotels based on the price range as well after fetching the data
+          const filteredHotels = data.hotels.filter(hotel => hotel.price <= price);
+          setList(filteredHotels);
         }
       } else {
-        // If no facilities are selected, refetch hotels based on the price range
+        // If no facilities are selected, apply the price filter to the city-based hotels
         handlePrice();
       }
     } catch (error) {
@@ -27,25 +31,28 @@ function Hotels({ hotels }) {
     }
   };
 
+  // Fetch and filter hotels by price range within the selected city
   const handlePrice = async () => {
     try {
       const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/facilities/range?price=${price}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels?city=${city}`
       );
       if (data?.hotels) {
-        setList(data.hotels);
+        // Filter the hotels based on the selected price
+        const filteredHotels = data.hotels.filter(hotel => hotel.price <= price);
+        setList(filteredHotels);
       }
     } catch (error) {
       console.error("Error fetching hotels by price range:", error);
     }
   };
 
-  // Trigger handlePrice whenever the price changes
+  // Apply price filter whenever the price changes
   useEffect(() => {
     handlePrice();
   }, [price]);
 
-  // Trigger handleCheckList whenever checkedList changes
+  // Apply facility filter whenever checkedList changes
   useEffect(() => {
     handleCheckList();
   }, [checkedList]);
@@ -69,12 +76,6 @@ function Hotels({ hotels }) {
                 <Hotel e={e} />
               </div>
             ))
-          ) : hotels && hotels.length > 0 ? (
-            hotels.map((e) => (
-              <div className="m-5 col-span-8" key={e._id}>
-                <Hotel e={e} />
-              </div>
-            ))
           ) : (
             <div className="m-5">
               <h2>No hotels found for the selected filters</h2>
@@ -89,23 +90,22 @@ function Hotels({ hotels }) {
 export async function getServerSideProps(context) {
   const { city } = context.query; // Get the city from the query parameters
 
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3000'; // Fallback to localhost if BASE_URL is not set
-
   let res;
 
   if (city) {
-    // If a city is provided, fetch hotels based on the city
-    res = await fetch(`${baseUrl}/api/hotels?city=${city}`);
+    // Fetch hotels based on the city first
+    res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels?city=${city}`);
   } else {
-    // If no city is provided, fetch all hotels
-    res = await fetch(`${baseUrl}/api/hotels`);
+    // If no city is provided, fetch all hotels (or handle accordingly)
+    res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/hotels`);
   }
 
   const data = await res.json();
 
   return {
     props: {
-      hotels: data.hotels ? data.hotels : data.allhotels,
+      initialHotels: data.hotels || [],  // Pass initial hotels fetched by location
+      initialCity: city || "",           // Pass the city to the component
     },
   };
 }

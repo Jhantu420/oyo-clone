@@ -1,17 +1,18 @@
 import connectDB from "@/db";
 import Hotel from "@/models/hotel-model";
 
-async function Index(req, res) {
+async function handler(req, res) {
   await connectDB(); // Ensure the DB is connected
 
   if (req.method === "GET") {
     const { city } = req.query;
 
     try {
-      // If city is provided, search by location, else return all hotels
       let hotels;
+
+      // If the city parameter is provided, search for hotels in that city
       if (city) {
-        hotels = await Hotel.find({ locations: city });
+        hotels = await Hotel.find({ locations: { $regex: new RegExp(city, 'i') } }); // Case-insensitive search
       } else {
         hotels = await Hotel.find({}); // Fetch all hotels if no city is specified
       }
@@ -30,7 +31,8 @@ async function Index(req, res) {
   }
 }
 
-export default Index;
+export default handler;
+
 
 
 // import connectDB from "@/db";

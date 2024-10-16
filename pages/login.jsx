@@ -58,7 +58,7 @@ function Login() {
           router.back()
         } else {
           // Handle signup request
-          const response = await axios.post(`${process.env.BASE_URL}/api/user/register`, {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/register`, {
             name,
             email,
             password
